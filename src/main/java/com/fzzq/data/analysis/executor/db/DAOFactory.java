@@ -46,6 +46,20 @@ public class DAOFactory {
         return dataSources.getDAO(database);
     }
 
+    public synchronized DAO getCCDao(String database) {
+        if (!dataSources.contains(database)) {
+            dataSources.setDataSource(database, getCCDataSource());
+        }
+        return dataSources.getDAO(database);
+    }
+
+    public synchronized DAO getDCDao(String database) {
+        if(!dataSources.contains(database)){
+            dataSources.setDataSource(database, getDCDataSource());
+        }
+        return dataSources.getDAO(database);
+    }
+
     private synchronized DataSource getKFDataSource() {
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setDriverClassName(dbConfig.getDriver());
@@ -72,6 +86,27 @@ public class DAOFactory {
         dataSource.setUrl(dbConfig.getUrl());
         dataSource.setUsername(dbConfig.getUser(DbConfig.USER_JF));
         dataSource.setPassword(dbConfig.getPass(DbConfig.PASS_JF));
+        dataSource.setMaxActive(dbConfig.getPoolSize());
+        return dataSource;
+    }
+
+    private synchronized DataSource getCCDataSource() {
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName(dbConfig.getDriver());
+        dataSource.setUrl(dbConfig.getUrl());
+        dataSource.setUsername(dbConfig.getUser(DbConfig.USER_CC));
+        dataSource.setPassword(dbConfig.getPass(DbConfig.PASS_CC));
+        dataSource.setMaxActive(dbConfig.getPoolSize());
+        return dataSource;
+    }
+
+    //东财数据库
+    private synchronized DataSource getDCDataSource(){
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName(dbConfig.getDriver());
+        dataSource.setUrl(dbConfig.getUrl(DbConfig.DATABASE_DC));
+        dataSource.setUsername(dbConfig.getUser(DbConfig.USER_DC));
+        dataSource.setPassword(dbConfig.getPass(DbConfig.PASS_DC));
         dataSource.setMaxActive(dbConfig.getPoolSize());
         return dataSource;
     }
